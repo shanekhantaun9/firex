@@ -13,4 +13,4 @@ go instal github.com/shanekhantaun9/firex@latest
 firex example.apk
 ```
 
-<img src="firex_poc.png">
+<img src="firex.png">
