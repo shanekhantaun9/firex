@@ -5,7 +5,7 @@ So, instead of decompiling or extracting apk and looking for firebase url, I cre
 
 ## Installation
 ```
-go instal github.com/shanekhantaun9/firex@latest
+go install github.com/shanekhantaun9/firex@latest
 ```
 
 ## Usage
