@@ -16,6 +16,7 @@ import (
 func main() {
     if len(os.Args) < 2 {
         fmt.Println("[?] Usage: firex.go example.apk")
+        fmt.Println("[?] Version 1.0.1")
         fmt.Println("[+] @shanekhantaun9")
         return
     }
