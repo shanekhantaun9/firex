@@ -9,13 +9,8 @@ import (
     "regexp"
     "runtime"
     "strings"
-)
 
-// ANSI color codes for console output
-const (
-    green = "\033[32m"
-    red   = "\033[31m"
-    reset = "\033[0m"
+    "github.com/fatih/color"
 )
 
 func main() {
@@ -53,10 +48,17 @@ func main() {
     firebaseURLRegex := regexp.MustCompile(`https://.*firebase.*`)
     firebaseURLs := firebaseURLRegex.FindAllString(string(stringsXMLBytes), -1)
 
+    // Check if any URLs were found
+    if len(firebaseURLs) == 0 {
+        color.Red("[-] Firebase url is not found")
+        return
+    }
+
     // Print the URLs found
     for _, url := range firebaseURLs {
         // Remove </string> from the URL
         url = strings.Replace(url, "</string>", "", -1)
+        url = strings.TrimRight(url, "\r")
         fmt.Printf("[+] Firebase URL found: %s\n", url)
 
         // Append /.json to the URL
@@ -78,9 +80,11 @@ func main() {
         }
         bodyString := string(bodyBytes)
         if strings.Contains(bodyString, "Permission denied") {
-            fmt.Println(red + "[-] Firebase Permission denied" + reset)
+            color.Red("[-] Firebase Permission denied")
+        } else if strings.Contains(bodyString, "has been deactivated.") {
+            color.Red("[-] Firebase has been deactivated.")
         } else {
-            fmt.Println(green + "[+] Firebase is accessible, go to this url: " + url + reset)
+            color.Green("[+] Firebase is accessible, go to this url: %s", url)
         }
     }
 
@@ -91,14 +95,14 @@ func main() {
     var cmdArgs []string
     if runtime.GOOS == "windows" {
         cmdArgs = []string{"/C", "rmdir", "/s", "/q", strings.Replace(apkPath, ".apk", "", 1)}
+        cmd = exec.Command("cmd", cmdArgs...)
     } else {
         cmdArgs = []string{"-rf", strings.Replace(apkPath, ".apk", "", 1)}
+        cmd = exec.Command("rm", cmdArgs...)
     }
-    cmd = exec.Command("rm", cmdArgs...)
     err = cmd.Run()
     if err != nil {
         fmt.Println("[-] Error removing extracted folder:", err)
         return
     }
-
 }
